@@ -3,6 +3,7 @@
 
 // Number is prime with probability 1-2^(-S) if isPrime
 const int S = 50;
+RNG Cryptography::rng = RNG();
 
 // Shanks method(baby-step-giant-step algorithm)
 const BigInt Cryptography::discrete_log(const BigInt& g, const BigInt& b, const BigInt& n){
@@ -55,7 +56,7 @@ bool Cryptography::isPrime(const BigInt& n){
 	if (n % 2 == 0) return false;
 	BigInt a;
 	for (int i = 0; i < S; i++){
-		a = randBigInt(n - 1) + 1;
+		a = rng.next(n - 1) + 1;
 		if (::witness(a, n))
 			return false;
 	}
@@ -158,7 +159,7 @@ const int Cryptography::jacobi_symbol(const BigInt& a, const BigInt& m){
 const BigInt Cryptography::discrete_sqrt(const BigInt& a, const BigInt& p){
 	BigInt w = 1, b;
 	while(legendre_symbol(w, p) == 1){
-		b = randBigInt(p);
+		b = rng.next(p);
 		w = b*b - a;
 		if (w == 0) return b;
 	}

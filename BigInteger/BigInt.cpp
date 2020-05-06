@@ -324,10 +324,6 @@ const BigInt findInverse(const BigInt& y, const BigInt& modulo){
 	return inverse_y;
 }
 
-const BigInt randBigInt(const BigInt& p){
-	return rand() * (p/(RAND_MAX) + 1) % p;
-}
-
 std::string BigInt::toString() const {
 
 	int n = this->bits.size();

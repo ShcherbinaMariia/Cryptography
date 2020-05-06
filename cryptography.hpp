@@ -1,9 +1,13 @@
 #pragma once
 #include "BigInt.hpp"
+#include "rng.hpp"
 #include <map>
 
 class Cryptography {
+private:
+	static RNG rng;
 public:
+
 	// solve equation g^x = b (mod n)
 	static const BigInt discrete_log(const BigInt& g, const BigInt& b, const BigInt& n);
 

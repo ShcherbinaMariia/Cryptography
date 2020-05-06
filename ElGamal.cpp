@@ -23,12 +23,12 @@ ElGamal::ElGamal(EllipticCurve* curve, Point P, BigInt N){
 }
 
 const std::pair<BigInt, Point> ElGamal::createKeys() {
-	BigInt k = randBigInt(this->N - 1) + 1;
+	BigInt k = this->rng.next(this->N - 1) + 1;
 	return std::make_pair(k, k*this->P);
 }
 
 const std::pair<Point, Point> ElGamal::encrypt(const Point M, const Point Y) {
-	BigInt r = randBigInt(this->N - 1) + 1;
+	BigInt r = this->rng.next(this->N - 1) + 1;
 	Point d, g, h;
 	d = r * Y;
 	g = r * this->P;

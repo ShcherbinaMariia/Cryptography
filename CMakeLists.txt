@@ -3,7 +3,7 @@ set(CMAKE_CXX_STANDARD 11)
 
 project(cryptography)
 
-set(SOURCE_EXE main.cpp cryptography.cpp elliptic_curve.cpp ElGamal.cpp mapping.cpp)
+set(SOURCE_EXE main.cpp cryptography.cpp elliptic_curve.cpp ElGamal.cpp mapping.cpp rng.cpp)
 include_directories(BigInteger)
 
 add_executable(cryptography ${SOURCE_EXE})

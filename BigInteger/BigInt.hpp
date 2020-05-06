@@ -30,7 +30,6 @@ public:
 	friend const BigInt gcdEx(BigInt a, BigInt b, BigInt& x, BigInt& y);
 	friend const BigInt gcd(const BigInt& a, const BigInt& b);
 	friend const BigInt findInverse(const BigInt& y, const BigInt& modulo);
-	friend const BigInt randBigInt(const BigInt& p);
 	friend const BigInt operator - (const BigInt& value);
 	friend const BigInt operator + (const BigInt& a, const BigInt& b);
 	friend const BigInt operator - (const BigInt& a, const BigInt& b);

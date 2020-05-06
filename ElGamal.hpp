@@ -1,11 +1,13 @@
 #include "elliptic_curve.hpp"
 #include "mapping.hpp"
+#include "rng.hpp"
 
 class ElGamal{
 	EllipticCurve* curve;
 	Point P; // generator of some cyclic subgroup G
 	BigInt N; // order of a group
 	Mapping m;
+	RNG rng;
 
 public:
 	// using secp256k1
