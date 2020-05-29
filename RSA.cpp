@@ -32,7 +32,7 @@ const BigInt RSA::decrypt(const BigInt& ciphertext, const BigInt& private_key, c
 	return power(ciphertext, private_key, modulo);
 }
 
-std::vector<BigInt> RSA::encrypt(std::vector<BigInt>& message, const BigInt& public_key, const BigInt& modulo){
+std::vector<BigInt> RSA::encrypt_(std::vector<BigInt> message, const BigInt& public_key, const BigInt& modulo){
 	std::vector<BigInt> result;
 	for (auto message_chunk : message){
 		result.push_back(encrypt(message_chunk, public_key, modulo));
@@ -40,7 +40,7 @@ std::vector<BigInt> RSA::encrypt(std::vector<BigInt>& message, const BigInt& pub
 	return result;
 }
 
-std::vector<BigInt> RSA::decrypt(std::vector<BigInt>& ciphertexts, const BigInt& private_key, const BigInt& modulo){
+std::vector<BigInt> RSA::decrypt_(std::vector<BigInt> ciphertexts, const BigInt& private_key, const BigInt& modulo){
 	std::vector<BigInt> result;
 	for (auto ciphertext_chunk : ciphertexts){
 		result.push_back(decrypt(ciphertext_chunk, private_key, modulo));
@@ -48,17 +48,25 @@ std::vector<BigInt> RSA::decrypt(std::vector<BigInt>& ciphertexts, const BigInt&
 	return result;
 }
 
+std::vector<BigInt> RSA::encrypt(std::string message, const BigInt& public_key, const BigInt& modulo){
+	return encrypt_(BigIntMapping::toVectorBigInt(message), public_key, modulo);
+}
+
+std::string RSA::decrypt(std::vector<BigInt> ciphertext, const BigInt& private_key, const BigInt& modulo){
+	return BigIntMapping::toString(decrypt_(ciphertext, private_key, modulo));
+}
+
 RSA::Signature RSA::sign(std::string& message, Keys keys){ 
 	Signature signature;
 	signature.public_key = keys.public_key;
 	signature.modulo = keys.n;
 	std::vector<BigInt> mapped_message = BigIntMapping::toVectorBigInt(message);
-	signature.signatures = encrypt(mapped_message, keys.private_key, signature.modulo);
+	signature.signatures = encrypt_(mapped_message, keys.private_key, signature.modulo);
 	return signature;
 }
 
 bool RSA::verify(std::string& message, Signature signature){
-	return BigIntMapping::toString(decrypt(signature.signatures, signature.public_key, signature.modulo)) == message;
+	return BigIntMapping::toString(decrypt_(signature.signatures, signature.public_key, signature.modulo)) == message;
 }
 
 std::vector<BigInt> BigIntMapping::toVectorBigInt(std::string message){

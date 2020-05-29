@@ -19,3 +19,6 @@ add_executable(blockchain blockchain.cpp blockchain_client.cpp merkle_tree.cpp p
 add_subdirectory(SHA256)
 
 target_link_libraries(blockchain bigint SHA256 nlohmann_json::nlohmann_json)
+
+add_executable(group_rsa group_rsa.cpp prime_rng.cpp cryptography.cpp rng.cpp rsa.cpp group_rsa_main.cpp)
+target_link_libraries(group_rsa bigint)

@@ -6,8 +6,8 @@ class RSA{
 private:
 	PrimeRNG prime_rng;
 
-	std::vector<BigInt> encrypt(std::vector<BigInt>& message, const BigInt& public_key, const BigInt& modulo);
-	std::vector<BigInt> decrypt(std::vector<BigInt>& ciphertexts, const BigInt& private_key, const BigInt& modulo);
+	std::vector<BigInt> encrypt_(std::vector<BigInt> message, const BigInt& public_key, const BigInt& modulo);
+	std::vector<BigInt> decrypt_(std::vector<BigInt> ciphertexts, const BigInt& private_key, const BigInt& modulo);
 
 public:
 	struct Keys{
@@ -23,6 +23,10 @@ public:
 	};
 
 	Keys createKeys(int length_in_bits, int public_exponent_value = 65537);
+
+	std::vector<BigInt> encrypt(std::string message, const BigInt& public_key, const BigInt& modulo);
+	std::string decrypt(std::vector<BigInt> ciphertext, const BigInt& private_key, const BigInt& modulo);
+
 	const BigInt encrypt(const BigInt& message, const BigInt& public_key, const BigInt& modulo);
 	const BigInt decrypt(const BigInt& ciphertext, const BigInt& private_key, const BigInt& modulo);
 
