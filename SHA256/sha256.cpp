@@ -179,3 +179,12 @@ LongHex SHA256::hash(LongHex message){
 	std::vector<byte> message_bytes = message.getBytes();
 	return hash(&message_bytes[0], message_bytes.size());
 }
+
+LongHex SHA256::hash(std::string message){
+	std::vector<byte> message_bytes;
+	message_bytes.resize(message.size());
+	for (int i = 0; i < message.size(); i++){
+		message_bytes[i] = message[i];
+	}
+	return hash(&message_bytes[0], message_bytes.size());
+}

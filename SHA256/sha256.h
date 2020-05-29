@@ -21,4 +21,5 @@ private:
 public:
 	LongHex hash(byte* message, unsigned int nb);
 	LongHex hash(LongHex message);
+	LongHex hash(std::string message);
 };
