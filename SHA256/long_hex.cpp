@@ -26,11 +26,64 @@ std::string LongHex::toString(){
 	return result;
 }
 
-const LongHex& LongHex::concatenate(LongHex& other){
-	this->bytes.insert(this->bytes.end(), other.getBytes().begin(), other.getBytes().end());
-	return *this;
+const LongHex LongHex::concatenate(LongHex& other){
+	LongHex long_hex;
+	std::vector<byte> bytes;
+	bytes.resize(this->bytes.size() + other.getBytes().size());
+	
+	for (int i = 0; i < this->bytes.size(); i++){
+		bytes[i] = this->bytes[i];
+	}
+
+	for (int i = 0; i < other.getBytes().size(); i++){
+		bytes[this->bytes.size() + i] = other.getBytes()[i];
+	}
+
+	long_hex.setBytes(this->bytes);
+	return long_hex;
 }
 
-std::vector<byte> LongHex::getBytes(){
+std::vector<byte> LongHex::getBytes() const {
 	return this->bytes;
+}
+
+void LongHex::setBytes(std::vector<byte> bytes) {
+	this->bytes = bytes;
+}
+
+bool LongHex::operator == (LongHex const &other) const{
+	if (this->bytes.size() != other.getBytes().size()) return false;
+
+	for (int i = 0; i < this->bytes.size(); i++){
+		if (this->bytes[i] != other.getBytes()[i]) return false;
+	}
+	return true;
+}
+
+bool LongHex::operator != (LongHex const &other) const{
+	return !(*this == other);
+}
+
+bool LongHex::hasZerosPrefix(int nBits) const{
+	int zeroBits = 0;
+	int n = 0;
+	while (n < this->bytes.size() && zeroBits < nBits){
+		for (int shift = 7; shift >=0; shift--){
+			if ((this->bytes[n] >> shift) & 1) return false;
+			zeroBits++;
+			if (zeroBits == nBits) return true;
+		}
+		n++;
+	}
+	return false;
+}
+
+void to_json(json& j, const LongHex& long_hex){
+	j = json{{"bytes", long_hex.getBytes()}};
+}
+
+void from_json(const json& j, LongHex& long_hex){
+	std::vector<byte> bytes;
+	j.at("bytes").get_to(bytes);
+	long_hex.setBytes(bytes);
 }
