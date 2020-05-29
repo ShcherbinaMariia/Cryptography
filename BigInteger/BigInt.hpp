@@ -3,6 +3,9 @@
 #include <string>
 #include <cmath>
 
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
+
 class BigInt {
 private:
 	BigInt(std::vector<int> bits, bool sign=true);
@@ -24,6 +27,7 @@ public:
 	bool operator != (BigInt const &other) const;
 
 	std::string toString() const;
+	int firstDigit() const;
 
 	friend const BigInt abs(const BigInt& value);
 	friend const BigInt sqrt(const BigInt& a);
@@ -42,3 +46,6 @@ public:
 	friend const BigInt operator * (const BigInt& a, int b);
 	friend const BigInt power(const BigInt& a, const BigInt& n, const BigInt& modulo);
 };
+
+void to_json(json& j, const BigInt& big_int);
+void from_json(const json& j, BigInt& big_int);
