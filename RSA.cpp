@@ -7,7 +7,14 @@ RSA::Keys RSA::createKeys(int length_in_bits, int public_exponent_value){
 	BigInt n = p * q;
 	BigInt phi_n = (p - 1) * (q - 1);
 
-	BigInt public_exponent =  BigInt(public_exponent_value);
+	BigInt public_exponent;
+
+	if (public_exponent_value == 0){
+		public_exponent = this->prime_rng.nextPrime(length_in_bits / 2);
+	} else {
+		public_exponent =  BigInt(public_exponent_value);
+	}
+
 	BigInt private_exponent = findInverse(public_exponent, phi_n);
 
 	RSA::Keys result;
@@ -25,10 +32,59 @@ const BigInt RSA::decrypt(const BigInt& ciphertext, const BigInt& private_key, c
 	return power(ciphertext, private_key, modulo);
 }
 
-const BigInt RSA::createSignature(const BigInt& message, const BigInt& private_key, const BigInt& modulo){
-	return encrypt(message, private_key, modulo);
+std::vector<BigInt> RSA::encrypt(std::vector<BigInt>& message, const BigInt& public_key, const BigInt& modulo){
+	std::vector<BigInt> result;
+	for (auto message_chunk : message){
+		result.push_back(encrypt(message_chunk, public_key, modulo));
+	}
+	return result;
 }
 
-bool RSA::verifySignature(const BigInt& message, const BigInt& signature, const BigInt& public_key, const BigInt& modulo){
-	return decrypt(signature, public_key, modulo) == message;
+std::vector<BigInt> RSA::decrypt(std::vector<BigInt>& ciphertexts, const BigInt& private_key, const BigInt& modulo){
+	std::vector<BigInt> result;
+	for (auto ciphertext_chunk : ciphertexts){
+		result.push_back(decrypt(ciphertext_chunk, private_key, modulo));
+	}
+	return result;
+}
+
+RSA::Signature RSA::sign(std::string& message, Keys keys){ 
+	Signature signature;
+	signature.public_key = keys.public_key;
+	signature.modulo = keys.n;
+	std::vector<BigInt> mapped_message = BigIntMapping::toVectorBigInt(message);
+	signature.signatures = encrypt(mapped_message, keys.private_key, signature.modulo);
+	return signature;
+}
+
+bool RSA::verify(std::string& message, Signature signature){
+	return BigIntMapping::toString(decrypt(signature.signatures, signature.public_key, signature.modulo)) == message;
+}
+
+std::vector<BigInt> BigIntMapping::toVectorBigInt(std::string message){
+	std::vector<BigInt> result;
+	for (char symbol: message){
+		result.push_back(BigInt(int(symbol)));
+	}
+	return result;
+}
+
+std::string BigIntMapping::toString(std::vector<BigInt> numbers){
+	std::string result = "";
+	for (BigInt number: numbers){
+		result.push_back(char(number.firstDigit()));
+	}
+	return result;
+}
+
+void to_json(json& j, const RSA::Signature& signature){
+	j = json{{"signatures", signature.signatures},
+			 {"public_key", signature.public_key},
+			 {"modulo", signature.modulo}};
+}
+
+void from_json(const json& j, RSA::Signature& signature){
+	j.at("signatures").get_to(signature.signatures);
+	j.at("public_key").get_to(signature.public_key);
+	j.at("modulo").get_to(signature.modulo);
 }
